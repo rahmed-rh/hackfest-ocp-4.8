@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: hello-cronjob
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 10
+      backoffLimit: 3
+      activeDeadlineSeconds: 10
+      template:
+        spec:
+          containers:
+            - image: registry.redhat.io/openshift4/ose-cli:v4.6
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  set -e
+                  date; echo "Hello World"
+                  sleep 25s
+              imagePullPolicy: Always
+              name: hello-cronjob
+          dnsPolicy: ClusterFirst
+          restartPolicy: OnFailure
+          terminationGracePeriodSeconds: 30
